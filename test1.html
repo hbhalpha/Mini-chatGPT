@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Chat Example</title>
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      #container {
+        background-color: #eee;
+        height: 100%;
+       display: flex;
+       flex-direction: column;
+      justify-content: flex-end;
+      }
+      #messages {
+       flex-grow: 1;
+       overflow-y: auto;
+       padding: 10px;
+       box-sizing: border-box;
+      }
+      .message {
+        text-align: right;
+       margin-bottom: 10px;
+      }
+      .reply {
+        text-align: left;
+        color: green;
+       margin-bottom: 10px;
+      }
+      .avatar {
+        width: 20px;
+        height: 20px;
+        display: inline-block;
+        vertical-align: middle;
+        margin-right: 5px;
+      }
+      .avatar.left {
+        margin-right: 10px;
+        margin-left: 0;
+      }
+      .avatar.right {
+        margin-right: 0;
+        margin-left: 10px;
+      }
+      #input-wrapper {
+        position: sticky;
+       bottom: 0;
+        width: 100%;
+       background-color: #fff;
+       padding: 10px;
+      }
+      #input {
+        width: calc(100% - 80px);
+        margin: 5px;
+        padding: 5px;
+        border: none;
+        border-radius: 5px;
+      }
+      #send-button {
+        width: 70px;
+        margin: 5px;
+        padding: 5px;
+        border: none;
+        border-radius: 5px;
+        background-color: blue;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+   <div id="container">
+     <div id="messages"></div>
+      <div id="input-wrapper">
+        <input type="text" id="input" placeholder="Type your message here..." />
+        <button type="submit" id="send-button">Send</button>
+      </div>
+   </div>
+    <script>
+      function sendMessage() {
+        const message = document.getElementById("input").value;
+        if (message.trim() === "") {
+          return false;
+        }
+        const messages = document.getElementById("messages");
+         const messageContainer = document.createElement("div");
+       messageContainer.classList.add("message-container");
+        const messageDiv = document.createElement("div");
+        messageDiv.classList.add("message");
+        messageDiv.innerHTML = message +':'+ '<img class="avatar left" src="file:///C|/Users/hbh/Desktop/杂项/v2-a7b2115180254c586e9f3d3926e94797_r.jpg"> ';
+       messageContainer.appendChild(messageDiv);
+       messages.appendChild(messageContainer);
+        messages.appendChild(document.createElement("hr"));
+        document.getElementById("input").value = "";
+        replyMessage(message);
+        return false;
+      }
+      function processMessage(message) 
+      { const tempMessage = message;
+
+        if (message.includes("?")||message.includes("？")) {
+          message= message.replaceAll("?", "!");
+          message= message.replaceAll("？", "!");
+        } 
+         if (message.includes("是不是")) {
+          message= message.replace("是不是", "是");
+        } 
+        if (message.includes("告诉")) {
+          message= message.replace("告诉", "回答");
+        } 
+        if (message.includes("吗")) {
+          message= message.replace("吗", "（肯定）");
+        } 
+        if (message.includes("你")||message.includes("我")) {
+          message= message.replace("你", "xx").replace("我", "你").replace("xx","我");
+        } 
+       
+         if(tempMessage.includes("?")==false&&tempMessage.includes("？")==false&&tempMessage.includes("是不是")==false) {
+          return "聊天格式不规范";
+        }
+         else return message;
+      }
+      function replyMessage(message) {
+        const messages = document.getElementById("messages");
+        const reply = processMessage(message);
+        const replyContainer = document.createElement("div");
+        replyContainer.classList.add("reply-container");
+        const avatar = document.createElement("img");
+        avatar.classList.add("avatar");
+        avatar.classList.add("right");
+        avatar.src = "file:///C|/Users/hbh/Desktop/杂项/v2-a7b2115180254c586e9f3d3926e94797_r.jpg";
+        const replyText = document.createElement("div");
+        replyText.classList.add("reply-text");
+        replyText.innerText = reply;
+        replyContainer.appendChild(avatar);
+        replyContainer.appendChild(replyText);
+        messages.appendChild(replyContainer);
+        messages.appendChild(document.createElement("hr"));
+}
+      document.getElementById("send-button").addEventListener("click", sendMessage);
+    </script><!---<img src="file:///C|/Users/hbh/Desktop/杂项/v2-a7b2115180254c586e9f3d3926e94797_r.jpg" width="1500" height="55" alt=""/>--->
+  </body>
+</html>
