@@ -10,6 +10,7 @@
         padding: 0;
       }
       #container {
+        
         background-color: #eee;
         height: 100%;
        display: flex;
@@ -54,6 +55,8 @@
        padding: 10px;
       }
       #input {
+        position: absolute;
+        top: -20px;
         width: calc(100% - 80px);
         margin: 5px;
         padding: 5px;
@@ -82,6 +85,36 @@
       </div>
    </div>
     <script>
+      var draggable = document.getElementById("input");
+
+        var isDragging = false;
+        var startX = 0;
+        var startY = 0;
+
+        function mouseDown(event) {
+          isDragging = true;
+          startX = event.clientX - draggable.offsetLeft;
+          startY = event.clientY - draggable.offsetTop;
+         // draggable.style.backgroundColor = "red";
+        }
+
+        function mouseMove(event) {
+          if (isDragging) {
+            var newX = event.clientX - startX;
+            var newY = event.clientY - startY;
+            draggable.style.left = newX + "px";
+            draggable.style.top = newY + "px";
+          }
+        }
+
+        function mouseUp(event) {
+          isDragging = false;
+         // draggable.style.backgroundColor = "blue";
+        }
+
+        draggable.addEventListener("mousedown", mouseDown);
+        document.addEventListener("mousemove", mouseMove);
+        document.addEventListener("mouseup", mouseUp);
       function sendMessage() {
         const message = document.getElementById("input").value;
         if (message.trim() === "") {
