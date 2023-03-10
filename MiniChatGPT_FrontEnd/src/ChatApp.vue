@@ -1,10 +1,11 @@
 <template>
+
   <el-config-provider namespace="ep">
     <div style="display: flex">
-      <BaseHeader />
+      <div style="background-image: url(src/assets/RankBack.png);background-size: cover"> <BaseHeader /></div>
     </div>
     <div style="display: flex">
-      <BaseSide />
+      <div style="background-image: url(src/assets/RankBack.png);background-size: cover">  <BaseSide /></div>
       <div id="main1">
         <!--  <img alt="Vue logo" class="element-plus-logo" src="./assets/logo.png" />-->
         <ChatWorld  msg="这是练习项目1"  />

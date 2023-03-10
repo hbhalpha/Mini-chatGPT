@@ -1,5 +1,3 @@
-
-## 本前端框架来源于https://github.com/element-plus/element-plus-vite-starter
 # element-plus-vite-starter
 
 > A starter kit for Element Plus with Vite

@@ -1,11 +1,13 @@
 <template>
   <el-config-provider namespace="ep">
     <BaseHeader />
+
     <div style="display: flex">
       <BaseSide />
       <div id="main1">
-      <!--  <img alt="Vue logo" class="element-plus-logo" src="./assets/logo.png" />-->
-        <HelloWorld  msg="MiniChatGPT"  />
+       <img alt="Vue logo" class="element-plus-logo" src="./assets/SDULogo3.png" />
+        <img alt="Vue logo"  src="./assets/hbhLogo.png" height="107" width="107" style="margin: auto"/>
+        <HelloWorld msg="MiniChatGPT"  />
       </div>
     </div>
   </el-config-provider>
@@ -21,16 +23,16 @@
 }
 
 .element-plus-logo {
-  width: 50%;
+  margin: auto;
+  width: 60%;
+
 }
 #main1
 {
- height: calc(100vh - 58px);
+  height:100%;
   width: 100%;
-  background-color: #eee;
-
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+
 }
 </style>
