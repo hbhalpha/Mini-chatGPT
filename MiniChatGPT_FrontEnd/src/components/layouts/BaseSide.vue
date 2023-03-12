@@ -38,6 +38,10 @@
       <el-icon><setting /></el-icon>
       <template #title>Navigator Four</template>
     </el-menu-item>
+    <el-menu-item index="5"  >
+      <Music style="width: 10%;display: flex;
+  justify-content: center;"></Music>
+    </el-menu-item>
   </el-menu>
 </template>
 

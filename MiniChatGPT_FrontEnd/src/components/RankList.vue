@@ -1,6 +1,7 @@
 <template>
   <div >
     <RankingList title="热点问题排行榜" :data="data" />
+
   </div>
 </template>
 

@@ -1,8 +1,10 @@
+import os
 from flask import Flask, jsonify,request
 from flask_cors import CORS
 import pymysql
 from threading import Lock
 from dbutils.pooled_db import PooledDB
+import json
 app = Flask(__name__)
 CORS(app)
 
@@ -79,5 +81,34 @@ def get_data():
         with counter_lock:
             connection_count -= 1
         return 'Failed to connect to database.'
+@app.route('/DataPost',methods=['POST'])
+def process_data():
+    data = request.json
+    indicator = data['Indicator']
+    json_data = json.loads(data['JsonData'])
+    print(json_data)
+    if indicator == "update":
+        update_messages(json_data)
+        print(messages)
+        return jsonify({'success': True})
+    elif indicator == "geturl":
+        url = save_messages()
+        return jsonify({'url': url})
+    else:
+        return jsonify({'error': 'Invalid indicator'})
+
+def update_messages(data):
+    global messages
+    messages = data;
+    print(messages)
+
+def save_messages():
+    folder_path = r'D:\user\hbh\Downloads\element-plus-vite-starter-main\element-plus-vite-starter-main\src\components\chatdata'
+    file_path = os.path.join(folder_path, 'messages.json')
+    with open(file_path, 'w') as f:
+        json.dump(messages, f)
+    # 返回本地文件路径
+    return file_path
+
 if __name__ == '__main__':
     app.run(host='localhost', port=8080)

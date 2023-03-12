@@ -1,11 +1,11 @@
 <template>
   <div>
-    <div style="background-image: url(src/assets/rktitle.webp) ;background-size: cover">
+    <div style="background-image: url(src/assets/RankBack.png) ;background-size: cover">
     <h2 style="color: #42b8dd">{{ title }}</h2></div>
-    <div style="background-image: url(src/assets/RankBack.png);background-size: cover">
+    <div >
     <ol>
-      <li v-for="(item, index) in sortedData" :key="item.name" style="color: white">
-        {{ item.name }} 热度 {{ item.value }} <img src="src/assets/Fire.png">
+      <li v-for="(item, index) in sortedData" :key="item.questions" style="color: white">
+        {{ item.questions}} 热度 {{ item.HotValue }} <img src="src/assets/Fire.png">
       </li>
     </ol>
     </div>
@@ -16,8 +16,10 @@
 import { defineComponent, computed } from 'vue';
 
 interface DataItem {
-  name: string;
-  value: number;
+  id:number;
+  questions: string;
+  answers:string;
+  HotValue: number;
 }
 
 export default defineComponent({
@@ -33,7 +35,7 @@ export default defineComponent({
   },
   setup(props) {
     const sortedData = computed(() => {
-      return props.data.sort((a, b) => b.value - a.value);
+      return props.data.sort((a, b) => b.HotValue - a.HotValue);
     });
 
     return {

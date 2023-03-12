@@ -30,6 +30,7 @@ declare module '@vue/runtime-core' {
     ElTag: typeof import('element-plus/es')['ElTag']
     HelloWorld: typeof import('./components/HelloWorld.vue')['default']
     Input: typeof import('./components/Input.vue')['default']
+    Music: typeof import('./components/Music.vue')['default']
     RankingList: typeof import('./components/RankingList.vue')['default']
     RankList: typeof import('./components/RankList.vue')['default']
     Test: typeof import('./components/RankList.vue')['default']
