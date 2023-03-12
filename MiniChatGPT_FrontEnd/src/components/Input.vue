@@ -10,6 +10,9 @@
         </el-select>
       </div>
       <el-button @keydown.enter="sendMessage" @click="sendMessage" :disabled="isMessageEmpty" style="background: #589ef8 ; color: antiquewhite">Send</el-button>
+      <el-input placeholder="请输入聊天记录名" v-model="chatingname" @input="BeingInput" @keydown.enter="getrecord" style="background: #589ef8;"></el-input>
+      <el-button @click="getrecord(chatingname)" style="background: #589ef8 ; color: antiquewhite">确定选择聊天记录</el-button>
+
     </div>
     <div class="chat-window" style="background-image: url(src/assets/Background3.webp) ;background-size: cover; ">
       <div v-for="(msg, index) in messages" :key="index"
@@ -21,10 +24,11 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, ref, computed, watch, onMounted} from 'vue';
+import {defineComponent, ref, computed, watch, onMounted, provide} from 'vue';
 import useDraggable from './useDraggable';
 import axios from 'axios';
-
+import * as fs from 'fs'
+import * as string_decoder from "string_decoder";
 
 
 
@@ -50,10 +54,15 @@ export default defineComponent({
           type: Array as () => DataItem[],
           required: true,
         },
+        str: {
+          type: String,
+          required: true
+        }
       },
+
       setup(props) {
         const message = ref('');
-        const chatingname = ref('');
+        var chatingname = ref('');
         const messages = ref<Message[]>([]);
         const isMessageEmpty = computed(() => message.value.trim() === '');
         onMounted(async () =>{
@@ -61,6 +70,49 @@ export default defineComponent({
             content: '你好我是玥玥，是一个聊天机器人，我可以与您进行简单的对话捏，当然我也会回答您一些问题捏（可以回答的看热榜），玥玥超喜欢你喵！',
             sender: 'Reply',
           });})
+        async function getrecord(): Promise<void>
+        {
+          console.log(chatingname.value);
+          try {
+            const getRec = await axios.get('http://localhost:8080/GetRecNum', {
+              params: {
+                str: '12345678' ,
+              }
+            });
+            const newname =getRec.data.replace('.json','');
+            if(newname == '') console.log(chatingname.value)
+              else
+            {
+              console.log(newname)
+              chatingname.value = newname
+            }
+
+            console.log(getRec)
+          }
+          catch (error)
+          {
+            console.log(error)
+          }
+          try {
+
+            const response = await axios.get('http://localhost:8080/ReadingFiles', {
+              params: {
+                str:chatingname.value
+              }
+            });
+            const dataread = response.data;
+            messages.value=[];
+            for(var i=0;i<=dataread.length-1;i++)
+            {
+              messages.value.push(dataread[i])
+            }
+
+            console.log(dataread);
+          } catch (error) {
+            console.error(error);
+          }
+        };
+        provide('getrecord',getrecord);
         const sendRequest = async (strrr:string) => {
           try {
             const result = await axios.get('http://localhost:8080/data2?str='+strrr);
@@ -144,6 +196,7 @@ export default defineComponent({
             content: getReply(temp),
             sender: 'Reply',
           });
+          //发送更新聊天记录的请求
           const dataPost: DataPost = {
             Indicator: "update",
             JsonData: JSON.stringify(messages.value),
@@ -185,7 +238,9 @@ export default defineComponent({
         const onInput = (value: string) => {
           message.value = value;
         };
-
+        const BeingInput = (value:string ) =>{
+          chatingname.value = value
+        }
         // 选中值改变时的回调函数
         const onChange = (value: string) => {
           message.value = value;
@@ -195,7 +250,9 @@ export default defineComponent({
           message,
           messages,
           isMessageEmpty,
+          chatingname,
           sendMessage,
+          BeingInput,
           isDragging,
           dragX,
           dragY,
@@ -204,6 +261,7 @@ export default defineComponent({
           filteredData,
           onInput,
           onChange,
+          getrecord
         };
       },
     }

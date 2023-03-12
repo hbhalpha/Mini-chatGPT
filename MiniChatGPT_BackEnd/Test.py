@@ -91,24 +91,53 @@ def process_data():
         update_messages(json_data)
         print(messages)
         return jsonify({'success': True})
-    elif indicator == "geturl":
-        url = save_messages()
-        return jsonify({'url': url})
     else:
-        return jsonify({'error': 'Invalid indicator'})
+        url = save_messages(indicator)
+        return jsonify({'url': url})
+
 
 def update_messages(data):
     global messages
     messages = data;
     print(messages)
 
-def save_messages():
+def save_messages(str):
     folder_path = r'D:\user\hbh\Downloads\element-plus-vite-starter-main\element-plus-vite-starter-main\src\components\chatdata'
-    file_path = os.path.join(folder_path, 'messages.json')
+    file_path = os.path.join(folder_path, str+'.json')
+    print(file_path);
     with open(file_path, 'w') as f:
         json.dump(messages, f)
     # 返回本地文件路径
     return file_path
+@app.route('/ReadingFiles',methods=['GET'])
+def get_chatdata():
+    strValue = request.args.get('str')
+    folder_path = r'D:\user\hbh\Downloads\element-plus-vite-starter-main\element-plus-vite-starter-main\src\components\chatdata'
+    file_path = os.path.join(folder_path, strValue + '.json')
+    with open(file_path, 'r') as f:
+        data = json.load(f)
+    return jsonify(data)
+@app.route('/get_file_names')
+def get_file_names():
+    dir_path = r'D:\user\hbh\Downloads\element-plus-vite-starter-main\element-plus-vite-starter-main\src\components\chatdata'
+    file_names = [f for f in os.listdir(dir_path) if os.path.isfile(os.path.join(dir_path, f))]
+    print(file_names);
+    return jsonify(file_names)
+@app.route('/GetRecNum')
+def get_recnum():
+    strValue = request.args.get('str');
+
+    global Snum
+    if(strValue=='12345678'):
+        Temp = Snum
+        Snum = ''
+        print(Temp + '1234')
+        return Temp
+
+    else:
+        Snum = strValue
+        print('hbh' + Snum)
+        return 'Sucess !'
 
 if __name__ == '__main__':
     app.run(host='localhost', port=8080)

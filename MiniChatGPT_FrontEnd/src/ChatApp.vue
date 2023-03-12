@@ -8,13 +8,13 @@
       <div style="background-image: url(src/assets/RankBack2.webp);background-size: cover">  <BaseSide /></div>
       <div id="main1">
         <!-- <img alt="Vue logo" class="element-plus-logo" src="./assets/logo.png" />-->
-       <ChatWorld  msg="这是练习项目1"  />
+       <ChatWorld  msg="这是练习项目1" arg=strrrr  />
       </div>
     </div>
 
   </el-config-provider>
 </template>
-<script>
+<script lang="ts">
 
 </script>
 <style>

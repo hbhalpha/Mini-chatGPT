@@ -7,7 +7,7 @@ import axios from 'axios';
 //   name: "ChatWorld"
 // }
 var data = ref([]);
-
+defineProps<{ msg: string }>();
 onMounted(async () => {
   try {
     const response = await axios.get('http://localhost:8080/data');
@@ -34,7 +34,7 @@ const toast = () => {
 <template>
 
   <div id="main">
-    <Input :data="data"></Input>
+    <Input :data="data" ></Input>
 
   </div>
 

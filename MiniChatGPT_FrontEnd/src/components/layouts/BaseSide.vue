@@ -14,7 +14,7 @@
       <el-menu-item-group>
         <template #title><span>Group One</span></template>
         <el-menu-item v-for="(link, index) in links" :key="index" :index="index">
-          <a :href="link.url">{{ link.name }}</a>
+          <el-button @click="getRec(link.name)">{{ link.name }}</el-button>
         </el-menu-item>
         <button @click="saveLink">Save</button>
       </el-menu-item-group>
@@ -46,17 +46,23 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import {onMounted, ref} from 'vue'
 import {
   Location,
   Document,
   Menu as IconMenu,
   Setting,
 } from '@element-plus/icons-vue'
-
+import axios from "axios";
+import {inject} from "vue";
+import path from 'path';
 interface Link {
   name: string,
   url: string,
+}
+interface DataPost{
+  Indicator : string;
+  JsonData : string;
 }
 const isCollapse = ref(true)
 const handleOpen = (key: string, keyPath: string[]) => {
@@ -65,15 +71,70 @@ const handleOpen = (key: string, keyPath: string[]) => {
 const handleClose = (key: string, keyPath: string[]) => {
   console.log(key, keyPath)
 }
-const links = ref<Link[]>([
-  { name: 'item one', url: 'http://example.com/1' },
-  { name: 'item two', url: 'http://example.com/2' },
-])
-
+const links = ref<Link[]>([])
+onMounted(() => {
+  axios.get('http://localhost:8080/get_file_names')
+      .then(response => {
+        const fileList = response.data as string[];
+        fileList.forEach(fileName => {
+          links.value.push({
+            name: fileName,
+            url: `www.example.com`
+          });
+        });
+      })
+      .catch(error => {
+        console.error(error);
+      });
+})
 const saveLink = () => {
-  const name = 'item ' + (links.value.length + 1)
-  const url = 'http://example.com/' + (links.value.length + 1)
-  links.value.push({ name, url })
+  const name = 'item' + (links.value.length + 1)
+  const dataPost: DataPost = {
+    Indicator: name,
+    JsonData: JSON.stringify({}),
+  };
+  axios.post('http://localhost:8080/DataPost', JSON.stringify(dataPost), {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+      .then(response => {
+        console.log(response.data);
+      })
+      .catch(error => {
+        console.error(error);
+      });
+
+  links.value=[];
+  axios.get('http://localhost:8080/get_file_names')
+      .then(response => {
+        const fileList = response.data as string[];
+        fileList.forEach(fileName => {
+          links.value.push({
+            name: fileName,
+            url: `www.example.com`
+          });
+        });
+      })
+      .catch(error => {
+        console.error(error);
+      });
+}
+async function getRec(arg:string)
+{
+  try {
+    const response = await axios.get('http://localhost:8080/GetRecNum', {
+      params: {
+        str: arg ,
+      }
+    });
+    console.log(arg)
+  }
+  catch (error)
+  {
+    console.log(error)
+  }
+
 }
 </script>
 
