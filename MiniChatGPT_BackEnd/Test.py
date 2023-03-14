@@ -5,6 +5,10 @@ import pymysql
 from threading import Lock
 from dbutils.pooled_db import PooledDB
 import json
+import re
+import requests
+from lxml import etree
+import jieba.analyse
 app = Flask(__name__)
 CORS(app)
 
@@ -23,7 +27,7 @@ pool = PooledDB(
 )
 
 @app.route('/data2')
-def get_data2():
+def get_data2(): #更新被询问次数
     global connection_count
     with counter_lock:
         connection_count += 1
@@ -52,7 +56,7 @@ def get_data2():
             connection_count -= 1
         return 'Failed to connect to database.'
 @app.route('/data')
-def get_data():
+def get_data():#返回数据库中文件
     global connection_count
     with counter_lock:
         connection_count += 1
@@ -82,7 +86,7 @@ def get_data():
             connection_count -= 1
         return 'Failed to connect to database.'
 @app.route('/DataPost',methods=['POST'])
-def process_data():
+def process_data():#对聊天记录的维护
     data = request.json
     indicator = data['Indicator']
     json_data = json.loads(data['JsonData'])
@@ -102,29 +106,58 @@ def update_messages(data):
     print(messages)
 
 def save_messages(str):
-    folder_path = r'D:\user\hbh\Downloads\element-plus-vite-starter-main\element-plus-vite-starter-main\src\components\chatdata'
-    file_path = os.path.join(folder_path, str+'.json')
+    contents = []
+    for d in messages:
+        if d["sender"] == "Me":
+            contents.append(d["content"])
+    print(contents)
+    jieba.load_userdict(r"C:\Users\hbh\Desktop\Mini_chatGPT\Mini chatGPT\MiniChatGPT_BackEnd\hbh_dir.txt")
+    # 处理每个content
+    keywords = {}  # 关键词及其出现次数的字典
+    for content in contents:
+        # 分词并提取关键词
+
+        words = jieba.analyse.extract_tags(content, topK=20, withWeight=True, allowPOS=('n', 'adj', 'ns'))
+        print(words)
+        for word, weight in words:
+            # 去除标点符号
+            if word.isalpha() or word.isdigit():
+                # 句法句意理解后的处理，此处略过
+                # 统计关键词出现次数
+                if word in keywords:
+                    keywords[word] += 1
+                else:
+                    keywords[word] = 1
+
+    # 返回出现次数最多的前三个关键词
+    top_keywords = sorted(keywords.items(), key=lambda x: x[1], reverse=True)[:4]
+    name=''
+    for keyword in top_keywords:
+        name = name+'_'+keyword[0]
+    print(name)
+    folder_path = r'C:\Users\hbh\Desktop\Mini_chatGPT\Mini chatGPT\MiniChatGPT_FrontEnd\src\components\chatdata'
+    file_path = os.path.join(folder_path, name+'.json')
     print(file_path);
     with open(file_path, 'w') as f:
         json.dump(messages, f)
     # 返回本地文件路径
     return file_path
 @app.route('/ReadingFiles',methods=['GET'])
-def get_chatdata():
+def get_chatdata(): #保存记录
     strValue = request.args.get('str')
-    folder_path = r'D:\user\hbh\Downloads\element-plus-vite-starter-main\element-plus-vite-starter-main\src\components\chatdata'
+    folder_path = r'C:\Users\hbh\Desktop\Mini_chatGPT\Mini chatGPT\MiniChatGPT_FrontEnd\src\components\chatdata'
     file_path = os.path.join(folder_path, strValue + '.json')
     with open(file_path, 'r') as f:
         data = json.load(f)
     return jsonify(data)
 @app.route('/get_file_names')
 def get_file_names():
-    dir_path = r'D:\user\hbh\Downloads\element-plus-vite-starter-main\element-plus-vite-starter-main\src\components\chatdata'
+    dir_path = r'C:\Users\hbh\Desktop\Mini_chatGPT\Mini chatGPT\MiniChatGPT_FrontEnd\src\components\chatdata'
     file_names = [f for f in os.listdir(dir_path) if os.path.isfile(os.path.join(dir_path, f))]
     print(file_names);
     return jsonify(file_names)
 @app.route('/GetRecNum')
-def get_recnum():
+def get_recnum():# //应用于处理点击事件 和input中确定选择结合
     strValue = request.args.get('str');
 
     global Snum
@@ -138,6 +171,61 @@ def get_recnum():
         Snum = strValue
         print('hbh' + Snum)
         return 'Sucess !'
+@app.route('/GetRubbish')
+def get_rubbbish():#爬虫
+
+    answer = ''
+    strV= request.args.get('str')
+    dpath =r'C:\Users\hbh\Desktop\Mini_chatGPT\Mini chatGPT\MiniChatGPT_FrontEnd'
+    path = os.path.join(dpath, strV)
+
+    data = {'image': open(path, 'rb')}
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
+                      'Chrome/68.0.3440.106 Safari/537.36 '
+    }
+    r = requests.post('https://graph.baidu.com/upload?tn=pc&from=pc&image_source=PC_UPLOAD_IMAGE_MOVE&range={'
+                      '%22page_from%22:%20%22shituIndex%22}&extUiData%5bisLogoShow%5d=1', files=data,
+                      headers=headers).text
+    url = json.loads(r)["data"]["url"]
+    r1 = requests.get(url, headers=headers).text
+    try:
+        name = re.findall('"subTitle":"(.*?)",', r1)[0]
+        a = "u'" + name + "'"
+        str1 = eval(a)
+        print(path)
+        answer +="物品是：" +str1+"  "
+        print(str1)
+        url = "https://lajifenleiapp.com/sk/" + str1
+        headers = {
+            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 "
+                          "Safari/537.36",
+
+        }
+        res = requests.get(url, headers=headers)
+        html = etree.HTML(res.text)
+        text = html.xpath("/html/body/div[1]/div[7]/div/div[1]/h1/span[3]")
+        try:
+            ent_text = etree.tostring(text[0], method='text', encoding='utf-8')
+            print(ent_text.decode())
+            answer += "一眼丁真鉴定为：" + ent_text.decode()+ "  "
+            if ent_text.decode() == "可回收物":
+                print("1")
+
+            else:
+                print("0")
+
+        except:
+            answer += "一眼丁真鉴定为：" +"图片网站未识别"
+            print("图片网站未识别")
+            print("2")
+    except:
+        answer+="物品是：百度识图未识别图片  ";
+        print("百度识图未识别图片")
+        print("2")
+    print(answer)
+    return answer;
+
 
 if __name__ == '__main__':
     app.run(host='localhost', port=8080)

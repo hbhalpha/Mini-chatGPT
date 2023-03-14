@@ -16,6 +16,7 @@ declare module '@vue/runtime-core' {
     ElButton: typeof import('element-plus/es')['ElButton']
     ElConfigProvider: typeof import('element-plus/es')['ElConfigProvider']
     ElDatePicker: typeof import('element-plus/es')['ElDatePicker']
+    ElDialog: typeof import('element-plus/es')['ElDialog']
     ElDropdown: typeof import('element-plus/es')['ElDropdown']
     ElDropdownItem: typeof import('element-plus/es')['ElDropdownItem']
     ElDropdownMenu: typeof import('element-plus/es')['ElDropdownMenu']
@@ -28,11 +29,15 @@ declare module '@vue/runtime-core' {
     ElSelect: typeof import('element-plus/es')['ElSelect']
     ElSubMenu: typeof import('element-plus/es')['ElSubMenu']
     ElTag: typeof import('element-plus/es')['ElTag']
+    ElUpload: typeof import('element-plus/es')['ElUpload']
     HelloWorld: typeof import('./components/HelloWorld.vue')['default']
     Input: typeof import('./components/Input.vue')['default']
     Music: typeof import('./components/Music.vue')['default']
+    PicPick: typeof import('./components/PicPick.vue')['default']
     RankingList: typeof import('./components/RankingList.vue')['default']
     RankList: typeof import('./components/RankList.vue')['default']
+    RubbishInput: typeof import('./components/RubbishInput.vue')['default']
+    RubbishWorld: typeof import('./components/RubbishWorld.vue')['default']
     Test: typeof import('./components/RankList.vue')['default']
   }
 }

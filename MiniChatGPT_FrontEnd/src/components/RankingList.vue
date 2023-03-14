@@ -20,6 +20,7 @@ interface DataItem {
   questions: string;
   answers:string;
   HotValue: number;
+  
 }
 
 export default defineComponent({

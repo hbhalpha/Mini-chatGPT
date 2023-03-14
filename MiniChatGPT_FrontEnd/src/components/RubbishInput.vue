@@ -1,24 +1,41 @@
 <template>
   <div class="chat" >
     <div class="chat-input-container" style="background-image: url(src/assets/Background4.webp)" >
-      <div  draggable="true" id="Putting"
-            :style="{cursor: isDragging ? 'move' : 'default', position: 'absolute', left: dragX + 'px', top: dragY + 'px'}">
-        <el-input type="text" v-model="message" placeholder="say something" @input="onInput" @keydown.enter="sendMessage"
-                  :style="{ background: isMessageEmpty ? ' #589ef8' : 'green'}"/>
-        <el-select v-model="selectedValue" @change="onChange" style="width: 100%;background: #3cbbe5">
-          <el-option v-for="(item, index) in filteredData" :key="index" :label="item.questions" :value="item.questions" style="width: 100%;"></el-option>
-        </el-select>
+      <div>
+        <el-button @click="showFileDialog">选择图片</el-button>
+        <el-dialog v-model="dialogVisible" title="选择图片" width="30%">
+          <el-upload
+              class="upload-demo"
+              action="#"
+              :show-file-list="false"
+              :on-change="handleUploadChange"
+              :before-upload="beforeUpload"
+          >
+            <el-button slot="trigger" size="large" type="primary">
+              选择文件
+            </el-button>
+            <div slot="tip" class="el-upload__tip">
+              只能选择图片文件
+            </div>
+          </el-upload>
+          <div slot="footer" class="dialog-footer">
+            <el-button @click="dialogVisible = false">取消</el-button>
+            <el-button type="primary" @click="confirmSelection();getRubbishData();sendMessage()">确认</el-button>
+          </div>
+        </el-dialog>
+
       </div>
-      <el-button @keydown.enter="sendMessage" @click="sendMessage" :disabled="isMessageEmpty" style="background: #589ef8 ; color: antiquewhite">Send</el-button>
-      <el-input placeholder="请输入聊天记录名" v-model="chatingname" @input="BeingInput" @keydown.enter="getrecord" style="background: #589ef8;"></el-input>
-      <el-button @click="getrecord(chatingname)" style="background: #589ef8 ; color: antiquewhite">确定选择聊天记录</el-button>
-      <el-button @click="clear" style="background: #589ef8 ; color: antiquewhite">清空聊天记录</el-button>
+
     </div>
     <div class="chat-window" style="background-image: url(src/assets/Background3.webp) ;background-size: cover; ">
       <div v-for="(msg, index) in messages" :key="index"
            :class="{ 'chat-message': true, 'my-message': msg.sender === 'Me', 'reply-message': msg.sender === 'Reply' }">
         <div v-if="msg.Type === 'Text'">{{ msg.content }}</div>
-        <div v-else><img src="src/assets/Background.jpg" height="123" width="123" ></div>
+        <div v-else>
+          <div v-if="msg.content" >
+            <img  :src="msg.content" height="123" width="123">
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -63,20 +80,23 @@ export default defineComponent({
       },
 
       setup(props) {
+        const dialogVisible = ref(false);
+        var ReplyText = ref('')
+        const selectedImage = ref('');
         const message = ref('');
         var chatingname = ref('');
         const messages = ref<Message[]>([]);
         const isMessageEmpty = computed(() => message.value.trim() === '');
-        onMounted(async () =>{ // 初始挂载函数，用来提示
+        onMounted(async () =>{
           if(props.Mode == "Chat")
-          messages.value.push({
-            content: '你好我是玥玥，是一个聊天机器人，我可以与您进行简单的对话捏，当然我也会回答您一些问题捏（可以回答的看热榜），玥玥超喜欢你喵！',
-            Type:'Text',
-            sender: 'Reply',
-          });
+            messages.value.push({
+              content: '你好我是玥玥，是一个聊天机器人，我可以与您进行简单的对话捏，当然我也会回答您一些问题捏（可以回答的看热榜），玥玥超喜欢你喵！',
+              Type:'Text',
+              sender: 'Reply',
+            });
           if(props.Mode =="Rubbish")
             messages.value.push({
-              content: '你好我是玥玥，是一个聊天机器人，现在是垃圾分类与识别模式，玥玥会帮助你捏，玥玥超喜欢你喵！',
+              content: '你好我是玥玥，是一个聊天机器人，现在是垃圾分类与识别模式，在选择图片后请等待三秒，玥玥会帮助你捏，玥玥超喜欢你喵！',
               Type:'Text',
               sender: 'Reply',
             });
@@ -92,7 +112,7 @@ export default defineComponent({
             });
             const newname =getRec.data.replace('.json','');
             if(newname == '') console.log(chatingname.value)
-              else
+            else
             {
               console.log(newname)
               chatingname.value = newname
@@ -124,7 +144,7 @@ export default defineComponent({
           }
         };
         provide('getrecord',getrecord);
-        const sendRequest = async (strrr:string) => { //这个函数是为了计数，更新某个问题被问了多少次
+        const sendRequest = async (strrr:string) => {
           try {
             const result = await axios.get('http://localhost:8080/data2?str='+strrr);
             console.log(result.data)
@@ -133,89 +153,64 @@ export default defineComponent({
             console.error(error);
           }
         };
-        const clear = () =>{
-          messages.value = [];
-          messages.value.push({
-              content: '你好我是玥玥，是一个聊天机器人，我可以与您进行简单的对话捏，当然我也会回答您一些问题捏（可以回答的看热榜），玥玥超喜欢你喵！',
-              Type:'Text',
-              sender: 'Reply',
-        })
-        }
-
-
-        const getReply = (msg:string) =>{ // 这个函数是用来确定答复函数的
-          var flag=0;
-          var ReplyText :string ="";
-          for(var i=0;i<=props.data.length-1;i++)
-          {
-            if(props.data[i].questions==msg)
-            {
-              flag=1;
-              sendRequest(props.data[i].questions);
-              ReplyText = props.data[i].answers;
-              break;
-            }
-          }
-
-
-          if(flag==1)
-          {
-            return ReplyText;
-          }
-          else {
-            if(msg.includes('超喜欢玥玥')||msg.includes('超喜欢你')) return '玥玥也超喜欢你捏（'
-            if (msg === '你好'|| msg ==='你好玥玥') {
-              return '你好,我是一个由山东大学泰山学堂hbh开发的简单聊天机器人，我可以与你进行简单的逻辑对话，对于排行榜中存在的问题，我将给您解答，对于不符合规范的内容我将无法识别，抱歉喵。请问有什么能帮到你的吗?';
-            }
-            else {
-              const tempMessage = msg;
-
-              if (msg.includes("?")||msg.includes("？")) {
-                msg= msg.replaceAll("?", "!");
-                msg= msg.replaceAll("？", "!");
-              }
-              if (msg.includes("是不是")) {
-                msg= msg.replace("是不是", "是");
-              }
-              if (msg.includes("告诉")) {
-                msg= msg.replace("告诉", "回答");
-              }
-              if (msg.includes("吗")) {
-                msg= msg.replace("吗", "（肯定）");
-              }
-              if (msg.includes("你")||msg.includes("我")) {
-                msg= msg.replace("你", "xx").replace("我", "你").replace("xx","我");
-              }
-              if (msg.includes("玥玥")||msg.includes("我")) {
-                msg= msg.replace("玥玥", "我");
-              }
-              if(tempMessage.includes("?")==false&&tempMessage.includes("？")==false&&tempMessage.includes("是不是")==false) {
-                return '你好,我是一个由山东大学泰山学堂hbh开发的简单聊天机器人，我可以与你进行简单的逻辑对话，对于排行榜中存在的问题，我将给您解答，对于不符合规范的内容我将无法识别，抱歉'
-              }
-              else return msg
-            }
-          }
-
-
-        };
-        const sendMessage = () => {
-          if (isMessageEmpty.value) {
+        //下面是垃圾桶的代码
+        const handleUploadChange = (file: Blob) => {
+          if (!file) {
+            console.error('No file provided!');
             return;
           }
+
+
+          selectedImage.value = 'src/imagesTest/'+file.name;
+          console.log(selectedImage.value)
+        };
+
+        const beforeUpload = (file: File) => {
+          const isImage = file.type.indexOf('image') !== -1;
+          if (!isImage) {
+
+          }
+          return isImage;
+        };
+
+        const confirmSelection = () => {
+          // 处理选择图片后的逻辑
+          console.log('选中的图片：', selectedImage.value);
+          dialogVisible.value = false;
+        };
+        const showFileDialog = () => {
+          dialogVisible.value = true;
+        };
+//到此为止
+        async function getRubbishData() {
+          try {
+
+            const response = await axios.get('http://localhost:8080/GetRubbish?str=' + selectedImage.value);
+
+           ;console.log('成功获取字符串数据',response.data)
+            ReplyText.value = response.data;
+          } catch (error) {
+            console.error('请求错误', error);
+          }
+        }
+
+        const sendMessage = async () => {
+          await new Promise(resolve => setTimeout(resolve, 3000));
           console.log(JSON.stringify(messages.value) )
           messages.value.push({
-            content: message.value,
-            Type:'Text',
+            content: selectedImage.value,
+            Type:'Pic',
             sender: 'Me',
           });
           var temp = message.value;
-          message.value = '';
+          selectedImage.value = ''
           messages.value.push({
 
-            content: getReply(temp),
+            content: ReplyText.value,
             Type:'Text',
             sender: 'Reply',
           });
+
           //发送更新聊天记录的请求
           const dataPost: DataPost = {
             Indicator: "update",
@@ -267,22 +262,28 @@ export default defineComponent({
           selectedValue.value = value;
         };
         return {
-          message,// 单条消息
-          clear,//清屏函数
-          messages, // 消息列表
-          isMessageEmpty, // 判断消息是否为空
-          chatingname, // 聊天记录名（输入）
-          sendMessage,//发送信息
-          BeingInput, // 控制聊天记录名的输入
-          isDragging, // 拖动
+          message,
+          messages,
+          isMessageEmpty,
+          chatingname,
+          sendMessage,
+          BeingInput,
+          isDragging,
           dragX,
           dragY,
+          getRubbishData,
           enableDragging,
-          selectedValue, // 选择内容
+          selectedValue,
           filteredData,
           onInput,
           onChange,
-          getrecord// 获取记录
+          getrecord,
+          dialogVisible,
+          selectedImage,
+          showFileDialog,
+          handleUploadChange,
+          beforeUpload,
+          confirmSelection,
         };
       },
     }
@@ -389,5 +390,14 @@ el-option{
 .el-input::placeholder {
   color: red;
 }
-
+.upload-demo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  border: 1px solid #d9d9d9;
+  border-radius: 2px;
+  background-color: #fafafa;
+  margin-bottom: 20px;
+}
 </style>

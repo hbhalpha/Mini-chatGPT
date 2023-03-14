@@ -16,7 +16,7 @@
         <el-menu-item v-for="(link, index) in links" :key="index" :index="index">
           <el-button @click="getRec(link.name)">{{ link.name }}</el-button>
         </el-menu-item>
-        <button @click="saveLink">Save</button>
+        <el-button @click="saveLink">Save</el-button>
       </el-menu-item-group>
       <el-menu-item-group title="Group Two">
         <el-menu-item index="1-3">item three</el-menu-item>
@@ -87,12 +87,16 @@ onMounted(() => {
         console.error(error);
       });
 })
-const saveLink = () => {
-  const name = 'item' + (links.value.length + 1)
+var name='';
+
+const saveLink =async () => {
+
+
   const dataPost: DataPost = {
-    Indicator: name,
+    Indicator: 'hbh',
     JsonData: JSON.stringify({}),
   };
+  console.log("hbhhhhhhhhh")
   axios.post('http://localhost:8080/DataPost', JSON.stringify(dataPost), {
     headers: {
       'Content-Type': 'application/json',
@@ -100,27 +104,28 @@ const saveLink = () => {
   })
       .then(response => {
         console.log(response.data);
+        links.value=[];
+        axios.get('http://localhost:8080/get_file_names')
+            .then(response => {
+              const fileList = response.data as string[];
+              fileList.forEach(fileName => {
+                links.value.push({
+                  name: fileName,
+                  url: `www.example.com`
+                });
+              });
+            })
+            .catch(error => {
+              console.error(error);
+            });
       })
       .catch(error => {
         console.error(error);
       });
 
-  links.value=[];
-  axios.get('http://localhost:8080/get_file_names')
-      .then(response => {
-        const fileList = response.data as string[];
-        fileList.forEach(fileName => {
-          links.value.push({
-            name: fileName,
-            url: `www.example.com`
-          });
-        });
-      })
-      .catch(error => {
-        console.error(error);
-      });
+
 }
-async function getRec(arg:string)
+async function getRec(arg:string) //应用于处理点击事件 和input中确定选择结合
 {
   try {
     const response = await axios.get('http://localhost:8080/GetRecNum', {

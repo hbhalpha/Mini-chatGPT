@@ -33,9 +33,15 @@ const toast = () => {
 
 <template>
 
-  <div id="main">
-    <Input :data="data" ></Input>
+  <div id="main" v-if="msg === 'Chat'">
 
+    <Input :data="data" :Mode="msg"></Input>
+  </div>
+  <div id="main"  v-else-if="msg === 'Rubbish' ">
+    <RubbishInput :data="data" :Mode="msg"></RubbishInput>
+  </div>
+  <div id="main" v-else-if="msg === 'AI '">
+    <Input :data="data" :Mode="msg"></Input>
   </div>
 
 
