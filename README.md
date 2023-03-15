@@ -15,7 +15,14 @@ MiniChatGPT为一个基于js和python实现的网页版轻量化聊天机器人
 > （2）具有热点问题排名、最多提问者排名、最佳提问等热榜。  
 > （3）后端能够调用简单的Python程序，处理分词等简单的人工智能任务。  
 > 3月21日公开演示答辩，答辩前将所有资料（含源代码、文档、过程素材等）发邮件给dahogn@sdu.edu.cn，大附件请发网盘链接。
-
+## 基本实现信息
+| 类别 | 具体内容 |
+| :---: | :---: |
+| 名称 | MiniChatGPT|
+| 开发者 | 山东大学泰山学堂hbh |
+|  声明 | 本项目基于github项目 https://github.com/element-plus/element-plus-vite-starter |
+| 前端 |基于Vue， ElementUI ，html ，css， js，ts，|
+| 后端 |基于python flask框架 mysql数据库|
 ## 本项目本地运行
 1.首先需要下载Python后端的依赖
 2.在文件保存记录/图片识别等后端，你需要将路径更换为本地
