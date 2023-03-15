@@ -3,11 +3,8 @@
     <div class="chat-input-container" style="background-image: url(src/assets/Background4.webp)" >
       <div  draggable="true" id="Putting"
             :style="{cursor: isDragging ? 'move' : 'default', position: 'absolute', left: dragX + 'px', top: dragY + 'px'}">
-        <el-input type="text" v-model="message" placeholder="say something" @input="onInput" @keydown.enter="sendMessage"
-                  :style="{ background: isMessageEmpty ? ' #589ef8' : 'green'}"/>
-        <el-select v-model="selectedValue" @change="onChange" style="width: 100%;background: #3cbbe5">
-          <el-option v-for="(item, index) in filteredData" :key="index" :label="item.questions" :value="item.questions" style="width: 100%;"></el-option>
-        </el-select>
+        <el-autocomplete type="text" id="Inputt" v-model="message" placeholder="say something" @keydown.enter="sendMessage"
+              :fetch-suggestions="getSuggestions"    :style="{ background: isMessageEmpty ? ' #589ef8' : 'green', width: '100%'}" />
       </div>
       <el-button @keydown.enter="sendMessage" @click="sendMessage" :disabled="isMessageEmpty" style="background: #589ef8 ; color: antiquewhite">Send</el-button>
       <el-input placeholder="请输入聊天记录名" v-model="chatingname" @input="BeingInput" @keydown.enter="getrecord" style="background: #589ef8;"></el-input>
@@ -41,6 +38,10 @@ export interface Message {
 interface DataPost{
   Indicator : string;
   JsonData : string;
+}
+interface Option{
+  value:string;
+  answer:string;
 }
 interface DataItem {
   id:number;
@@ -80,7 +81,14 @@ export default defineComponent({
               Type:'Text',
               sender: 'Reply',
             });
+          if(props.Mode =="AI")
+            messages.value.push({
+              content: '你好我是玥玥，是一个聊天机器人，现在是强AI模式，玥玥作为一个高中生，将回复你各种问题',
+              Type:'Text',
+              sender: 'Reply',
+            });
         })
+
         async function getrecord(): Promise<void>
         {
           console.log(chatingname.value);
@@ -146,6 +154,24 @@ export default defineComponent({
         const getReply = (msg:string) =>{ // 这个函数是用来确定答复函数的
           var flag=0;
           var ReplyText :string ="";
+          console.log(props.Mode)
+          if(props.Mode === 'AI')
+          {
+            axios.get<string>('http://localhost:8080/AI', {
+              params: {
+                str: msg
+              }
+            })
+                .then(function(response) {
+                  const resp: string = response.data;
+                  ReplyText = resp
+                  console.log(resp);
+                })
+                .catch(function(error) {
+                  console.error(error);
+                });
+            return ReplyText
+          }
           for(var i=0;i<=props.data.length-1;i++)
           {
             if(props.data[i].questions==msg)
@@ -198,7 +224,7 @@ export default defineComponent({
 
 
         };
-        const sendMessage = () => {
+        const sendMessage = async () => {
           if (isMessageEmpty.value) {
             return;
           }
@@ -210,6 +236,7 @@ export default defineComponent({
           });
           var temp = message.value;
           message.value = '';
+
           messages.value.push({
 
             content: getReply(temp),
@@ -237,15 +264,25 @@ export default defineComponent({
         const { isDragging, dragX, dragY, enableDragging } = useDraggable()
         const selectedValue = ref('');
         // 所有数据
-        const filteredData = computed(() => {
-          if (message.value === '') {
-            return [];
-          } else {
-            console.log(props.data[0])
-            console.log(props.data.filter(item => item.questions.includes(message.value))[0].questions);
-            return props.data.filter(item => item.questions.includes(message.value));
+        function getSuggestions  (queryString: string, cb: (results: Option[]) => void)  {
+          const options = ref<Option[]>([]);
+          for(var i=0;i<=props.data.length-1;i++)
+          {
+            options.value.push({
+              value:props.data[i].questions,
+              answer:props.data[i].answers
+            })
           }
-        });
+          const results = queryString
+              ? options.value.filter(createFilter(queryString))
+              : options.value
+
+          cb(results)
+        }
+        function createFilter(queryString: string) {
+          return (option: Option) =>
+              option.value.toLowerCase().indexOf(queryString.toLowerCase()) !== -1
+        }
 
         // 监听输入框的值
         watch(message, (newValue, oldValue) => {
@@ -261,11 +298,7 @@ export default defineComponent({
         const BeingInput = (value:string ) =>{
           chatingname.value = value
         }
-        // 选中值改变时的回调函数
-        const onChange = (value: string) => {
-          message.value = value;
-          selectedValue.value = value;
-        };
+
         return {
           message,// 单条消息
           clear,//清屏函数
@@ -279,9 +312,8 @@ export default defineComponent({
           dragY,
           enableDragging,
           selectedValue, // 选择内容
-          filteredData,
           onInput,
-          onChange,
+          getSuggestions,
           getrecord// 获取记录
         };
       },
@@ -312,6 +344,7 @@ el-input[type='text'] {
   font-size: 32px;
   outline: none;
 }
+
 el-select
 {
   width: 100%;

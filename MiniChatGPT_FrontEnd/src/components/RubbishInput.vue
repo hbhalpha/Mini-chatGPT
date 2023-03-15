@@ -195,7 +195,7 @@ export default defineComponent({
         }
 
         const sendMessage = async () => {
-          await new Promise(resolve => setTimeout(resolve, 3000));
+          await new Promise(resolve => setTimeout(resolve, 5000));
           console.log(JSON.stringify(messages.value) )
           messages.value.push({
             content: selectedImage.value,
