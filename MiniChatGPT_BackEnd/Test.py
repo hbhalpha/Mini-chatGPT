@@ -10,7 +10,7 @@ import requests
 from lxml import etree
 import jieba.analyse
 import openai
-openai.api_key = "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"
+openai.api_key = ""
 app = Flask(__name__)
 CORS(app)
 
