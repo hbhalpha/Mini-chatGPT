@@ -1,4 +1,4 @@
-### 客户需求
+## 客户需求
 
 > Mini-ChatGPT  
 > ChatGPT（全名：Chat Generative Pre-trained Transformer），美国OpenAI研发的聊天机器人程序 ，于2022年11月30日发布 。ChatGPT是人工智能技术驱动的自然语言处理工具，它能够通过理解和学习人类的语言来进行对话，还能根据聊天的上下文进行互动，真正像人类一样来聊天交流，甚至能完成撰写邮件、视频脚本、文案、翻译、代码，写论文等任务。  
@@ -26,4 +26,17 @@
 |实现了热榜排名|√|
 |采用Python NLP对Json|√|
 
-### 实际展示如下
+## 实际展示如下
+### 界面展示:
+![](https://github.com/hbhalpha/Mini-chatGPT/blob/main/images/%E7%95%8C%E9%9D%A2%E5%B1%95%E7%A4%BA1.png)
+![](https://github.com/hbhalpha/Mini-chatGPT/blob/main/images/%E7%95%8C%E9%9D%A2%E5%B1%95%E7%A4%BA2.png)
+### 聊天界面展示:
+![](https://github.com/hbhalpha/Mini-chatGPT/blob/main/images/%E8%81%8A%E5%A4%A9%E7%95%8C%E9%9D%A2%E5%B1%95%E7%A4%BA.png)
+### 聊天界面与热榜:
+![](https://github.com/hbhalpha/Mini-chatGPT/blob/main/images/%E8%81%8A%E5%A4%A9%E7%95%8C%E9%9D%A2%E4%B8%8E%E7%83%AD%E6%A6%9C.jpg)
+### 历史记录分类与聊天框拖动:
+![](https://github.com/hbhalpha/Mini-chatGPT/blob/main/images/%E5%8E%86%E5%8F%B2%E8%AE%B0%E5%BD%95%E5%88%86%E7%B1%BB%E4%B8%8E%E8%81%8A%E5%A4%A9%E6%A1%86%E6%8B%96%E5%8A%A8.jpg)
+### 垃圾分类识别展示:
+![](https://github.com/hbhalpha/Mini-chatGPT/blob/main/images/%E5%9E%83%E5%9C%BE%E5%88%86%E7%B1%BB%E8%AF%86%E5%88%AB%E5%B1%95%E7%A4%BA.png)
+### 强AI展示:
+![](https://github.com/hbhalpha/Mini-chatGPT/blob/main/images/%E5%BC%BAAI%E5%B1%95%E7%A4%BA.png)
