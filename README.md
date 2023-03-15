@@ -13,7 +13,10 @@
 > （3）后端能够调用简单的Python程序，处理分词等简单的人工智能任务。  
 > 3月21日公开演示答辩，答辩前将所有资料（含源代码、文档、过程素材等）发邮件给dahogn@sdu.edu.cn，大附件请发网盘链接。
 
-### 功能与完成情况
+## 本项目本地运行
+1.首先需要下载Python后端的依赖
+2.在文件保存记录/图片识别等后端，你需要将路径更换为本地
+## 功能与完成情况
 |功能|完成情况|
 |:---:|:---:|
 |采用成熟的Javascrip框架(vue)|√|
@@ -40,3 +43,11 @@
 ![](https://github.com/hbhalpha/Mini-chatGPT/blob/main/images/%E5%9E%83%E5%9C%BE%E5%88%86%E7%B1%BB%E8%AF%86%E5%88%AB%E5%B1%95%E7%A4%BA.png)
 ### 强AI展示:
 ![](https://github.com/hbhalpha/Mini-chatGPT/blob/main/images/%E5%BC%BAAI%E5%B1%95%E7%A4%BA.png)
+### 侧边栏展示
+![]()
+## 拓展
+|拓展功能|完成情况|
+|:---:|:---:|
+|实现支持图输入|√|
+|实现对图进行识别并分类的特异功能|√|
+|实现了基于Openai api的强AI对话并给AI设立了人设|√|
