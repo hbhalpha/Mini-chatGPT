@@ -1,7 +1,7 @@
 ## 项目简介
 MiniChatGPT为一个基于js和python实现的网页版轻量化聊天机器人
 ### hbh负责写了整个程序和该文档的大部分内容 sheldon001对于编写该文档提供了一些帮助
-### github中因为安全考虑 后更新的python为更新 请团入自己的openaiAPIkey，以及将后面‘是一个....’去掉
+### github中因为安全考虑 后更新的python未更新 请团入自己的openaiAPIkey，以及将后面‘是一个....’去掉
 ## 客户需求
 
 > Mini-ChatGPT  
