@@ -3,9 +3,9 @@ import { ref, onMounted, onUnmounted } from 'vue'
 export default function useDraggable() {
     const isDragging = ref(false)
     const startX = ref(0)
-    const startY = ref(-30)
+    const startY = ref(-45)
     const dragX = ref(0)
-    const dragY = ref(-30)
+    const dragY = ref(-45)
 
     const handleMouseDown = (e: MouseEvent) => {
         isDragging.value = true

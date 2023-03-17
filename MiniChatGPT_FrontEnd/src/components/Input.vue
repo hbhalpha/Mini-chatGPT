@@ -4,7 +4,7 @@
       <div  draggable="true" id="Putting"
             :style="{cursor: isDragging ? 'move' : 'default', position: 'absolute', left: dragX + 'px', top: dragY + 'px'}">
         <el-autocomplete type="text" id="Inputt" v-model="message" placeholder="say something" @keydown.enter="sendMessage"
-              :fetch-suggestions="getSuggestions"    :style="{ background: isMessageEmpty ? ' #589ef8' : 'green', width: '100%'}" />
+              :fetch-suggestions="getSuggestions" :autosize="autosize"   :style="{ background: isMessageEmpty ? ' #589ef8' : 'green', width: '100%'}" />
       </div>
       <el-button @keydown.enter="sendMessage" @click="sendMessage" :disabled="isMessageEmpty" style="background: #589ef8 ; color: antiquewhite">Send</el-button>
       <el-input placeholder="请输入聊天记录名" v-model="chatingname" @input="BeingInput" @keydown.enter="getrecord" style="background: #589ef8;"></el-input>

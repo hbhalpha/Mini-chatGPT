@@ -36,9 +36,7 @@ declare module '@vue/runtime-core' {
     Music: typeof import('./components/Music.vue')['default']
     PicPick: typeof import('./components/PicPick.vue')['default']
     RankingList: typeof import('./components/RankingList.vue')['default']
-    RankList: typeof import('./components/RankList.vue')['default']
     RubbishInput: typeof import('./components/RubbishInput.vue')['default']
     RubbishWorld: typeof import('./components/RubbishWorld.vue')['default']
-    Test: typeof import('./components/RankList.vue')['default']
   }
 }
